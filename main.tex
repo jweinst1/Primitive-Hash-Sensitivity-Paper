@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{url}
+
+\title{Bit Sensitvity of Primitive Hash Functions}
+\author{Joshua Weinstein}
+\affil{Splunk Inc}
+\date{May 2020}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\newtheorem{definition}{Definition}[subsection]
+\newtheorem{theorem}{Theorem}[subsection]
+
+\def\Qop{\operatornamewithlimits{%
+  \mathchoice{\vcenter{\hbox{\huge Q}}}
+             {\vcenter{\hbox{\Large Q}}}
+             {\mathrm{Q}}
+             {\mathrm{Q}}}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Common data structures like hash tables depend on hash functions to provide high performance and throughput. The hash functions used in such data structures are nearly all primitive. Primitive hash functions use one repeated statement of operations over the bytes of some input to produce a digest, as opposed to many rounds of rotations in cryptographic hash functions. This work seeks to test the bit sensitivity of primitive hash functions in regards to their digests. Popular hash functions are tested for absolute and relative bit flips, compared with variant functions. 
+\end{abstract}
+
+\section{Introduction}
+A primitive hash function generates digests with fast performance, often used in map-oriented data structures. Several widely used implementations of hash maps, like Dictionaries\citep{PythonDJB2} in the Python programming language, opt for the use of a primitive hash function, such as DJB2. These types of hash functions are typically single pass and thus possess optimal performance. Functions in the DJB family and the similar 
+
+
+\section{Definitions}
+
+This is the definition section
+
+\section{Methods}
+
+This is the methods section
+
+\section{Discussion}
+
+This is the results section
+
+%\begin{tikzcd}
+%A \arrow[rdd] \arrow[rd] \arrow[r, "\phi"] & B \\
+%& C \\
+%& D
+%\end{tikzcd}
+
+%\begin{figure}[h!]
+%\centering
+%includegraphics[scale=1.7]{universe}
+%\caption{The Universe}
+%\label{fig:universe}
+%\end{figure}
+
+\section{Conclusion}
+This is the conclusion section
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
