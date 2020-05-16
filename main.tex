@@ -28,11 +28,15 @@
 \maketitle
 
 \begin{abstract}
-Common data structures like hash tables depend on hash functions to provide high performance and throughput. The hash functions used in such data structures are nearly all primitive. Primitive hash functions use one repeated statement of operations over the bytes of some input to produce a digest, as opposed to many rounds of rotations in cryptographic hash functions. This work seeks to test the bit sensitivity of primitive hash functions in regards to their digests. Popular hash functions are tested for absolute and relative bit flips, compared with variant functions. 
+Can performance optimized hash functions be used as checksum functions? Common data structures like hash tables depend on hash functions to provide high performance and throughput. The hash functions used in such data structures are nearly all primitive. Primitive hash functions use one repeated statement of operations over the bytes of some input to produce a digest, as opposed to many rounds of iteration in cryptographic hash functions. This work seeks to test the bit sensitivity of primitive hash functions in regards to their digests. Popular hash functions are tested for absolute and relative bit flips, compared with variant functions. Results are discussed and evaluated for the potential use of primitive hash operations in designing data integrity check-sums. 
 \end{abstract}
 
 \section{Introduction}
-A primitive hash function generates digests with fast performance, often used in map-oriented data structures. Several widely used implementations of hash maps, like Dictionaries\citep{PythonDJB2} in the Python programming language, opt for the use of a primitive hash function, such as DJB2. These types of hash functions are typically single pass and thus possess optimal performance. Functions in the DJB family and the similar 
+A primitive hash function (PMF) generates digests with fast performance, often used in map-oriented data structures. Several widely used implementations of hash maps, like Dictionaries\citep{PythonDJB2} in the Python programming language, opt for the use of a primitive hash function, such as DJB2. These types of hash functions typically perform a single pass through input and thus possess optimal performance. A PMF also applies the same or similar operation(s) with regards to each byte of the input. This is a key difference from collision-resistant functions, such as from the Merkle–Damgård family of hash functions, where many different operations are performed at different $n$ positions in an input. Coupled with many rounds of iteration, collision resistant hash functions possess a relatively high cycles per byte ratio\citep{menasce2003security}. 
+
+A motivation for this work is to gauge what effect optimizing a hash function for performance has on it's potential to be used as a checksum function. A checksum function seeks to have a high degree of change between two digests, even if the inputs are very similar, and is often used for large inputs like files. A secure hash function prioritizes for collision resistance, and generally handles smaller inputs. Secure functions can be used to generate check-sums to test for data integrity on file systems\citep{sivathanu2004enhancing}. However, they do not generate acceptable performance for large files or data buckets.
+
+Symmetric bit rotation, a primitive cryptographic operation, has been proposed as an efficient hashing strategy\citep{pieprzyk1999fast}.
 
 
 \section{Definitions}
