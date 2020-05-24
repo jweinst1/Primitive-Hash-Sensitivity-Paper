@@ -28,7 +28,7 @@
 \maketitle
 
 \begin{abstract}
-Can performance optimized hash functions be used as checksum functions? Common data structures like hash tables depend on hash functions to provide high performance and throughput. The hash functions used in such data structures are nearly all primitive. Primitive hash functions use one repeated statement of operations over the bytes of some input to produce a digest, as opposed to many rounds of iteration in cryptographic hash functions. This work seeks to test the bit sensitivity of primitive hash functions in regards to their digests. Popular hash functions are tested for absolute and relative bit flips, compared with variant functions. Results are discussed and evaluated for the potential use of primitive hash operations in designing data integrity check-sums. 
+Can performance optimized hash functions be used as checksum functions? Common data structures like hash tables depend on hash functions to provide high performance and throughput. The hash functions used in such data structures are nearly all primitive. Primitive hash functions use one repeated statement of operations over the bytes of some input to produce a digest, as opposed to many rounds of iteration in cryptographic hash functions. This work seeks to test the bit sensitivity of primitive hash functions in regards to their digests. Primitive operations from popular hash functions, among others, are tested for absolute bit flips and degrees of bit sensitivity. Results are discussed and evaluated for the potential use of primitive hash operations in designing data integrity check-sums. 
 \end{abstract}
 
 \section{Introduction}
@@ -36,12 +36,86 @@ A primitive hash function (PMF) generates digests with fast performance, often u
 
 A motivation for this work is to gauge what effect optimizing a hash function for performance has on it's potential to be used as a checksum function. A checksum function seeks to have a high degree of change between two digests, even if the inputs are very similar, and is often used for large inputs like files. A secure hash function prioritizes for collision resistance, and generally handles smaller inputs. Secure functions can be used to generate check-sums to test for data integrity on file systems\citep{sivathanu2004enhancing}. However, they do not generate acceptable performance for large files or data buckets.
 
-Symmetric bit rotation, a primitive cryptographic operation, has been proposed as an efficient hashing strategy\citep{pieprzyk1999fast}.
+A goal of this work is to compare and contrast between  varying operations used in PMFs, and gauge what differences between them lead to increase in bit sensitivity. For example, symmetric bit rotation, a primitive cryptographic operation, has been proposed as an efficient hashing strategy\citep{pieprzyk1999fast}. A symmetric rotation hash function can be described as functions that map between binary vector spaces $f : V_n \rightarrow V_1$ by performing a combination of rotation and XOR operations. Bit rotations can generally increase the degree to which local bit flips in the input can result in broader, more widespread changes in the binary vector of the output. 
 
+A checksum function deals with inputs that are far larger in size than it's output, the checksum. Therefore, a PMF must also be a one-way compression function in order to be a suitable checksum function. Such as, if $\{0, 1\}^i$ is a vector space of all vectors with some length of bits $i$, and $F : \{0, 1\}^n \rightarrow \{0, 1\}^k$ is a function mapping the vector spaces of $n$ bits to $k$ bits, then $F$ is only a checksum function if $n \gg k$.
+
+The bit sensitivity of a PMF plays a critical role in determining it's potential to generate sufficient check-sums. Bit sensitivity can be measured by relating the Hamming distance of the input bit sequence, to the Hamming distance\citep{bookstein2002generalizedhamm} of the respective output bit sequences. A sequence of bits is always constructed from the alphabet $\{0, 1\}$, and can be considered a vector of some $n$ bits. The Hamming distance $H$ between bit vectors $v_a$ and $v_b$  is the sum of the absolute value of each bit in the vector representing the difference between $v_a$ and $v_b$. Simply,
+
+\begin{equation*}
+    H = \sum^{n}_{i = 0} |b_i| \Rightarrow b \in \{ v_a - v_b  \}
+\end{equation*}
+
+where $b$ is a bit. For every vector space containing vectors of $n$ bits, the maximum Hamming distance is $n$, and the minimum is $0$. Therefore, the larger the size in bits of outputs from a PMF, the more potential Hamming distance between those outputs. However, to be considered as an optimal checksum function, a hash function should produce outputs with a higher Hamming distance from inputs that have a low Hamming distance. Such that, 
+
+\begin{equation*}
+    \Bar{H_O} \gg \Bar{H_I}
+\end{equation*}
+
+It is possible for the Hamming distance among the outputs of a hash function to always be $0$. Consider the case of a function, $f(x) = x \lor 1$, where $\lor$ is the bitwise or operator. In this case, the range of $f$ is always the value $1$, thus the Hamming distance between any $f(x)$ is $0$. The main focus of this work measures several PMFs to compare how sensitivity toward bitwise changes in inputs are reflected in the Hamming distance of outputs.
 
 \section{Definitions}
 
-This is the definition section
+This section defines terminology and algorithms 
+
+The first function studied is the DJB2 hash function, which can be defined as follows.
+
+\begin{definition}
+
+Let $S$ be a string with $n$ bytes. Let $v$ be a vector with some finite size in bits. The DJB2 hash of $v$ can be evaluated from the recurrence relation,
+
+\begin{align*}
+    v_0 &= 5381 \\
+    v_n &= v_{n-1} \triangleleft 5 + v_{n-1} + c_{n-1} 
+\end{align*}
+
+where $c_{n-1}$ is the $nth$ byte in the string $S$, and $\triangleleft$ is bitwise left shift operator.
+
+\end{definition}
+
+The second PMF proposed in this work is the XO1 hash function. In contrast to DJB2, the XO1 function uses the bitwise XOR operation as opposed to binary addition. the base of XO1 is the first character of the string added to 8191, which is a Mersenne Prime\citep{robinson1954mersenne}.
+
+
+
+\begin{definition}
+Let $S$ be a string with $n$ bytes. Let $v$ be a vector of some finite size in bits. Let $k$ be some unsigned integer where $k < bits(v)$. The XO1 hash function can be described with the recurrence relation,
+\begin{align*}
+    v_0 &= c_0 + 8191 \\
+    v_n &= v_{n-1} \oplus c_{n-1} \triangleleft n \bmod k
+\end{align*}
+
+where $\oplus$ is the bitwise XOR operator, and $c_{n-1}$ is the $nth$ byte in the string $S$
+\end{definition}
+
+The last PMF is the ZR7 hash function. This function uses a combination of bit rotation and multiplication.
+
+\begin{definition}
+Let $S$ be a string with $n$ bytes. Let $v$ be a vector of some finite size in bits. The ZR7 hash function can be described with the recurrence relation,
+
+\begin{align*}
+    v_0 &= 257 \times c_0 \\
+    v_n &= rotl(v_{n-1}, 5) + c_{n-1} \times 17
+\end{align*}
+
+where $c_{n-1}$ is the $nth$ byte in the string S, and $rotl$ is the left bit rotation function. 
+
+\end{definition}
+
+Both $257$ and $17$ in the ZR7 hash function are Fermat numbers\citep{robinson1954mersenne}, that satisfy the equation,
+
+$$
+    F_n = 2^{2^n} + 1
+$$
+
+The sensitivity of a PMF, or any hash function, can be measured by comparing the mean Hamming distance of the function's outputs to the mean Hamming distance of it's inputs. The higher this ratio, the more sensitive the hash function is to bitwise changes in inputs. 
+
+\begin{definition}
+Let $C$ be a set of $k$ vectors which contain $n$ bits. The mean Hamming distance, $\Bar{H}$, is the summation of all Hamming distances between all pairs of vectors in $C$, divided by the total number of vector pairs in $C$, such that,
+
+$$
+   \Bar{H} = \frac{\sum^{k}_{i=0} H_i }{\binom{k}{2}}
+$$
+\end{definition}
 
 \section{Methods}
 
