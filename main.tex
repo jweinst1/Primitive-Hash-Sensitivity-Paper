@@ -115,11 +115,30 @@ Let $C$ be a set of $k$ vectors which contain $n$ bits. The mean Hamming distanc
 $$
    \Bar{H} = \frac{\sum^{k}_{i=0} H_i }{\binom{k}{2}}
 $$
+
+where $\binom{k}{2}$ is the binomial coefficient representing a sampling of pairs from $k$ vectors.
 \end{definition}
 
 \section{Methods}
 
-This is the methods section
+Testing hash functions for bit sensitivity requires a sufficiently large input string with small, even single bit changes for each new call. Using a batch of inputs with a very low mean Hamming distance $\Bar{H}$, allows a more clear observation into the bit sensitivity of a particular PMF, also known as the ratio 
+
+$$
+   s_b = \frac{\Bar{H_O}}{\Bar{H_I}}
+$$
+
+The input used for the bit sensitivity test is a uniformly constructed csv file. Each row contains three columns, oriented by an object relationship model of a person's name, their age, and their location. An example selection of rows is as follows:
+
+\vspace{5}
+\begin{tabular}{ c  c  c }
+  name & age & location \\
+  \hline
+  Joe & 64 & Tokyo \\
+  Brad & 32 & Paris \\
+  Stacey & 41 & New York \\
+\end{tabular}
+
+The test runs on a csv file with the above data patterns that is $1,000,000$ rows long. The goal of this test is to evaluate PMF's as potential checksum functions, thus large collections of data are the most realistic candidates.
 
 \section{Discussion}
 
