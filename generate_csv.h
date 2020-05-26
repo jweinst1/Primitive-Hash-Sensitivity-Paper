@@ -6,11 +6,12 @@
 
 typedef struct {
     char* data;
+    size_t size;
     size_t changes;
 } csv_data_t;
 
 
-csv_data_t* csv_data_new(void);
+csv_data_t* csv_data_new(size_t size);
 
 void csv_data_del(csv_data_t* csv);
 
