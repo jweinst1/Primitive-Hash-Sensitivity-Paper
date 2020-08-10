@@ -8,6 +8,8 @@ set(BIT_SENSITVITY_SOURCES
      hash_functions.c
 )
 
+message("Hello!")
+
 add_library(sens_func STATIC "${BIT_SENSITVITY_SOURCES}")
 
 enable_testing()
